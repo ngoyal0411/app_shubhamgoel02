@@ -35,3 +35,5 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+/DevOpsnMicroServices.Tests/TestResults/unit_tests.xml
+/.sonarqube/conf
