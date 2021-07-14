@@ -12,7 +12,7 @@ namespace DevOpsnMicroServices.Providers
     {
         public User GetUser(int Id)
         {
-            int UserCount = UserData.GetUsers().Where(x => x.Id == Id).Count();
+            int UserCount = UserData.GetUsers().Count(x => x.Id == Id);
             if (UserCount == 0)
                 return new User();
             else
