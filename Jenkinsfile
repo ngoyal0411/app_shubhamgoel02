@@ -56,7 +56,7 @@ pipeline {
                 bat "docker push ${Docker_Login_User}/i-${UserName}-master:dev_${BUILD_NUMBER}"
             }
         }
-        stage('deploy') {
+        stage('Deploy') {
             steps {
                 bat 'docker rm c-${UserName}_master -f'
                 bat "docker run -p 7100:7100 -d --name c-${UserName}_master ${Docker_Login_User}/i-${UserName}-master:dev_${BUILD_NUMBER}"
