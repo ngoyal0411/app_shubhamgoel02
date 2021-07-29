@@ -21,6 +21,9 @@ pipeline {
             }
         }
         stage('Sonarqube Begin') {
+            when {
+                branch 'master'
+            }
             steps {
                 withSonarQubeEnv('Test_Sonar') {
                     bat "${SonarQubeTool}\\SonarScanner.MSBuild.exe begin /k:sonar-${UserName} /n:sonar-${UserName} /v:1.0 /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.vscoveragexml.reportsPaths=**/*.coverage"
@@ -40,6 +43,9 @@ pipeline {
             }
         }
         stage('Sonarqube End') {
+            when {
+                    branch 'master'
+            }
             steps {
                 withSonarQubeEnv('Test_Sonar') {
                     bat "${SonarQubeTool}\\SonarScanner.MSBuild.exe end"
