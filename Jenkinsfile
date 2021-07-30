@@ -68,7 +68,7 @@
                             branch 'main'
                         }
                         steps {
-                            powershell 'docker rm $(docker ps --filter "publish=7200" -a -q) -f'
+                            powershell 'if($(docker ps --filter "publish=7200" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
                             bat "docker run -p 7200:7100 -d -e deployment.branch=main --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                         }                    
                     }
@@ -79,7 +79,7 @@
                             }
                         }
                         steps {
-                            powershell 'docker rm $(docker ps --filter "publish=7300" -a -q) -f'
+                            powershell 'if($(docker ps --filter "publish=7300" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
                             bat "docker run -p 7300:7100 -d -e deployment.branch=develop --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                         }                    
                     }
