@@ -103,7 +103,7 @@
                     }
                 }
             }
-            stage('Kubernetes Deployment') {
+            stage('Kubernetes Deployment (local)') {
                 parallel {
                     stage('main') {
                         when {
@@ -127,12 +127,12 @@
                     }
                 }
             }
-            stage('Deploy to GKE') {
+            stage('Kubernetes Deployment (GKE)') {
                 when {
                     branch 'develop'
                 }
                 steps {
-                    step([$class: 'KubernetesEngineBuilder', projectId: ${GKEProjectId}, clusterName: ${GKEClusterName}, location: ${GKELocation}, manifestPatttern: ${GKEDeploymentFile}, credentialsId: ${GKECredentials}, verifyDeployments: true])
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.GKEProjectId, clusterName: env.GKEClusterName, location: env.GKELocation, manifestPatttern: env.GKEDeploymentFile, credentialsId: env.GKECredentials, verifyDeployments: true])
                 }
             }
         }
