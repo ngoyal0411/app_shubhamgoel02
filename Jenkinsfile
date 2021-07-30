@@ -6,7 +6,7 @@
             UserName = 'shubhamgoel02'
             GKEProjectId = 'melodic-grail-321310'
             GKEClusterName = 'kubernetes-cluster-shubhamgoel02'
-            GKELocation = 'us-central1-c'
+            GKELocation = 'us-central1'
             GKEDeploymentFile = 'deployment.yml'
             GKECredentials = 'GKEK8sKey'
         }
