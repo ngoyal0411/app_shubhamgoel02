@@ -17,7 +17,7 @@
                     git branch: "${BRANCH_NAME}", url: 'https://github.com/shubhamgoel4aug/app_shubhamgoel02.git'
                 }
             }
-            stage('Sonarqube Begin') {
+            stage('Start sonarqube analysis') {
                 when {
                     branch 'main'
                 }
@@ -33,13 +33,13 @@
                     bat "dotnet build"
                 }
             }
-            stage('Test') {
+            stage('Unit Testing') {
                 steps {
                     bat 'dotnet test --logger "trx;LogFileName=DevOpsnMicroServices.Tests.Results.trx" --no-build --collect "Code Coverage"'
                     mstest testResultsFile:"**/*.trx", keepLongStdio: true
                 }
             }
-            stage('Sonarqube End') {
+            stage('Stop sonarqube analysis') {
                 when {
                         branch 'main'
                 }
@@ -49,15 +49,25 @@
                     }
                 }
             }
-            stage('Publish') {
+            stage('Docker Image') {
                 steps {
                     bat 'dotnet publish DevOpsnMicroServices -o Publish -c Release'
                     bat 'docker rmi -f devopsnmicroservices:local_dev'
                     bat "docker build -f ${WORKSPACE}\\Publish\\Dockerfile -t devopsnmicroservices:local_dev ${WORKSPACE}\\Publish"
                     bat "docker tag devopsnmicroservices:local_dev ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
-                    withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerHubPassword', usernameVariable: 'DockerHubUserName')]) {
-                        bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
-                        bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                }
+            }
+            stage('Containers') {
+                parallel {
+                    stage('PreContainerCheck') {
+                        powershell 'if($(docker ps --filter "publish=7200" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7200" -a -q) -f}'
+                        powershell 'if($(docker ps --filter "publish=7300" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
+                    }
+                    stage('PushtoDockerHub') {
+                        withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerHubPassword', usernameVariable: 'DockerHubUserName')]) {
+                            bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
+                            bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                        }
                     }
                 }
             }
@@ -67,8 +77,7 @@
                         when {
                             branch 'main'
                         }
-                        steps {
-                            powershell 'if($(docker ps --filter "publish=7200" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
+                        steps {                            
                             bat "docker run -p 7200:7100 -d -e deployment.branch=main --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                         }                    
                     }
@@ -78,8 +87,7 @@
                                 branch 'main'
                             }
                         }
-                        steps {
-                            powershell 'if($(docker ps --filter "publish=7300" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
+                        steps {                            
                             bat "docker run -p 7300:7100 -d -e deployment.branch=develop --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                         }                    
                     }
