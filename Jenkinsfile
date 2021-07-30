@@ -127,7 +127,7 @@
                     }
                 }
             }
-            stage(Deploy to GKE) {
+            stage('Deploy to GKE') {
                 when {
                     branch 'develop'
                 }
