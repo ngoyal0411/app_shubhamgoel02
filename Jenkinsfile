@@ -60,14 +60,18 @@
             stage('Containers') {
                 parallel {
                     stage('PreContainerCheck') {
-                        powershell 'if($(docker ps --filter "publish=7200" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7200" -a -q) -f}'
-                        powershell 'if($(docker ps --filter "publish=7300" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
+                        steps {
+                            powershell 'if($(docker ps --filter "publish=7200" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7200" -a -q) -f}'
+                            powershell 'if($(docker ps --filter "publish=7300" -a -q) -ne $null) {docker rm $(docker ps --filter "publish=7300" -a -q) -f}'
+                        }                        
                     }
                     stage('PushtoDockerHub') {
-                        withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerHubPassword', usernameVariable: 'DockerHubUserName')]) {
-                            bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
-                            bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
-                        }
+                        steps {
+                            withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerHubPassword', usernameVariable: 'DockerHubUserName')]) {
+                                bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
+                                bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                            }
+                        }                        
                     }
                 }
             }
