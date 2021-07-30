@@ -133,7 +133,13 @@
                     branch 'develop'
                 }
                 steps {
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.GKEProjectId, clusterName: env.GKEClusterName, location: env.GKELocation, manifestPattern: env.GKEDeploymentFile, credentialsId: env.GKECredentials, verifyDeployments: true])
+                    step([$class: 'KubernetesEngineBuilder', 
+                        projectId: env.GKEProjectId,
+                        clusterName: env.GKEClusterName,
+                        zone: env.GKELocation,
+                        manifestPattern: env.GKEDeploymentFile,
+                        credentialsId: env.GKECredentials,
+                        verifyDeployments: true])
                 }
             }
         }
