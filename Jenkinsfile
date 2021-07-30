@@ -4,6 +4,11 @@
         environment {
             SonarQubeTool = tool name: 'sonar_scanner_dotnet'
             UserName = 'shubhamgoel02'
+            GKEProjectId = 'melodic-grail-321310'
+            GKEClusterName = 'kubernetes-cluster-shubhamgoel02'
+            GKELocation = 'us-central1-c'
+            GKEDeploymentFile = 'deployment.yml'
+            GKECredentials = 'GKEK8sKey'
         }
         
         stages {
@@ -54,7 +59,6 @@
                     bat 'dotnet publish DevOpsnMicroServices -o Publish -c Release'
                     bat 'docker rmi -f devopsnmicroservices:local_dev'
                     bat "docker build -f ${WORKSPACE}\\Publish\\Dockerfile -t devopsnmicroservices:local_dev ${WORKSPACE}\\Publish"
-                    bat "docker tag devopsnmicroservices:local_dev ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                 }
             }
             stage('Containers') {
@@ -68,6 +72,8 @@
                     stage('PushtoDockerHub') {
                         steps {
                             withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerHubPassword', usernameVariable: 'DockerHubUserName')]) {
+                                bat "docker tag devopsnmicroservices:local_dev ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                                bat "docker tag devopsnmicroservices:local_dev ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                                 bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
                                 bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
                             }
@@ -82,7 +88,7 @@
                             branch 'main'
                         }
                         steps {                            
-                            bat "docker run -p 7200:7100 -d -e deployment.branch=main --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                            bat "docker run -p 7200:7100 -d -e deployment.branch=main --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                         }                    
                     }
                     stage('others') {
@@ -92,7 +98,7 @@
                             }
                         }
                         steps {                            
-                            bat "docker run -p 7300:7100 -d -e deployment.branch=develop --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                            bat "docker run -p 7300:7100 -d -e deployment.branch=develop --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                         }                    
                     }
                 }
@@ -119,6 +125,14 @@
                             bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
                         }                    
                     }
+                }
+            }
+            stage(Deploy to GKE) {
+                when {
+                    branch 'develop'
+                }
+                steps {
+                    step([$class: 'KubernetesEngineBuilder', projectId: ${GKEProjectId}, clusterName: ${GKEClusterName}, location: ${GKELocation}, manifestPatttern: ${GKEDeploymentFile}, credentialsId: ${GKECredentials}, verifyDeployments: true])
                 }
             }
         }

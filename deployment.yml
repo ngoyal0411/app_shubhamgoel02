@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: app-{{USERNAME}}
-        image: {{USERNAME}}/i-{{USERNAME}}-{{BRANCH_NAME}}:{{BUILD_NUMBER}}
+        image: {{USERNAME}}/i-{{USERNAME}}-{{BRANCH_NAME}}:latest
         env:
           - name: deployment.branch
             value: {{BRANCH_NAME}} 
