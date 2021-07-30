@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{
+    String x = Environment.GetEnvironmentVariables()["deployment.branch"].ToString();
+}
+<div style="background-color: silver; padding: 10px; font-family: Calibri">
+    Branch: @(x) <br />
+    API: <a href="/api/user">/api/user</a>
+</div>
+
