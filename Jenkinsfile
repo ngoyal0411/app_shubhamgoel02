@@ -14,11 +14,11 @@
                     cleanWs()
                 }
             }
-            /*stage('Checkout') {
+            stage('Checkout') {
                 steps {
                     git branch: 'develop', url: 'https://github.com/shubhamgoel4aug/app_shubhamgoel02.git'
                 }
-            }*/
+            }
             stage('Sonarqube Begin') {
                 when {
                     branch 'main'
