@@ -76,6 +76,7 @@
                                 bat "docker tag devopsnmicroservices:local_dev ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                                 bat "docker login -u ${DockerHubUserName} -p ${DockerHubPassword}"
                                 bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:${BUILD_NUMBER}"
+                                bat "docker push ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                             }
                         }                        
                     }
@@ -98,7 +99,7 @@
                             }
                         }
                         steps {                            
-                            bat "docker run -p 7300:7100 -d -e deployment.branch=develop --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
+                            bat "docker run -p 7300:7100 -d -e deployment.branch=${BRANCH_NAME} --name c-${UserName}_${BRANCH_NAME} ${UserName}/i-${UserName}-${BRANCH_NAME}:latest"
                         }                    
                     }
                 }
