@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopsnmicroservices
+  namespace: kubernetes-cluster-shubhamgoel02
+  labels:
+    app: app_shubhamgoel02
+spec:
+  selector:
+    matchLabels:
+      app: app-shubhamgoel02
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: app-shubhamgoel02
+    spec:
+      containers:
+      - name: app-shubhamgoel02
+        image: shubhamgoel02/i-shubhamgoel02-master:dev_84
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 7100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kubernetes-cluster-shubhamgoel02
+  name: app-shubhamgoel02
+spec:
+  type: LoadBalancer
+  selector:
+    app: app-shubhamgoel02
+  ports:
+  - port: 30157
+    targetPort: 7100
+    protocol: TCP

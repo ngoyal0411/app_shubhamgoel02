@@ -26,6 +26,7 @@ namespace DevOpsnMicroServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMvcCore().AddRazorViewEngine();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +45,7 @@ namespace DevOpsnMicroServices
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
             });
         }
     }
