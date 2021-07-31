@@ -116,7 +116,7 @@
                     }
                     stage('GKE') {
                         when {
-                            branch 'main'
+                            branch 'develop'
                         }
                         steps {
                             powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.yml"
