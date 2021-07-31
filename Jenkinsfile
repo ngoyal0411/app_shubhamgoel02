@@ -7,7 +7,6 @@
             PROJECT_ID = 'melodic-grail-321310'
             CLUSTER_NAME = 'kubernetes-cluster-shubhamgoel02'
             LOCATION = 'us-central1'
-            CREDENTIALS_ID = 'GKEK8sKey'
         }
         
         stages {
@@ -103,7 +102,7 @@
                     }
                 }
             }
-            stage('Kubernetes Deployment (local)') {
+            stage('Kubernetes Deployment') {
                 parallel {
                     stage('main') {
                         when {
@@ -111,6 +110,17 @@
                         }
                         steps {
                             powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl config use-context docker-desktop"
+                            bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
+                        }                    
+                    }
+                    stage('GKE') {
+                        when {
+                            branch 'main'
+                        }
+                        steps {
+                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl config use-context gke_${PROJECT_ID}_${LOCATION}_${CLUSTER_NAME}"
                             bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
                         }                    
                     }
@@ -122,24 +132,10 @@
                         }
                         steps {
                             powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30158') | Out-File ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl config use-context docker-desktop"
                             bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
                         }                    
                     }
-                }
-            }
-            stage('Kubernetes Deployment (GKE)') {
-                when {
-                    branch 'develop'
-                }
-                steps {
-                    step([
-                    $class: 'KubernetesEngineBuilder',
-                    projectId: env.PROJECT_ID,
-                    clusterName: env.CLUSTER_NAME,
-                    location: env.LOCATION,
-                    manifestPattern: 'deployment.yml',
-                    credentialsId: env.CREDENTIALS_ID,
-                    verifyDeployments: true])
                 }
             }
         }
