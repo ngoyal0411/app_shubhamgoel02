@@ -102,7 +102,7 @@
                     }
                 }
             }
-            stage('Kubernetes Deployment') {
+            stage('Kubernetes Deployment (Local)') {
                 parallel {
                     stage('main') {
                         when {
