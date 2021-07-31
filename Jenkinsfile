@@ -109,9 +109,9 @@
                             branch 'main'
                         }
                         steps {
-                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.yml"
+                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.main.yml"
                             bat "kubectl config use-context docker-desktop"
-                            bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl apply -f ${WORKSPACE}\\deployment.main.yml"
                         }                    
                     }
                     stage('GKE') {
@@ -119,9 +119,9 @@
                             branch 'develop'
                         }
                         steps {
-                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.yml"
+                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.gke.yml"
                             bat "kubectl config use-context gke_${PROJECT_ID}_${LOCATION}_${CLUSTER_NAME}"
-                            bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl apply -f ${WORKSPACE}\\deployment.gke.yml"
                         }                    
                     }
                     stage('others') {
@@ -131,9 +131,9 @@
                             }
                         }
                         steps {
-                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{BUILD_NUMBER}}', '${BUILD_NUMBER}').Replace('{{PORT}}', '30158') | Out-File ${WORKSPACE}\\deployment.yml"
+                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USERNAME}}', '${UserName}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30158') | Out-File ${WORKSPACE}\\deployment.${BRANCH_NAME}.yml"
                             bat "kubectl config use-context docker-desktop"
-                            bat "kubectl apply -f ${WORKSPACE}\\deployment.yml"
+                            bat "kubectl apply -f ${WORKSPACE}\\deployment.${BRANCH_NAME}.yml"
                         }                    
                     }
                 }
