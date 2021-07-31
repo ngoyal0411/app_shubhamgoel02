@@ -2,41 +2,41 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: devopsnmicroservices
-  namespace: kubernetes-cluster-{{USERNAME}}
+  namespace: kubernetes-cluster-{{USER_NAME}}
   labels:
-    app: app_{{USERNAME}}
+    app: app_{{USER_NAME}}
 spec:
   selector:
     matchLabels:
-      app: app-{{USERNAME}}
+      app: app-{{USER_NAME}}
   replicas: 3
   template:
     metadata:
       labels:
-        app: app-{{USERNAME}}
+        app: app-{{USER_NAME}}
     spec:
       containers:
-      - name: app-{{USERNAME}}
-        image: {{USERNAME}}/i-{{USERNAME}}-{{BRANCH_NAME}}:{{BUILD_NUMBER}}
+      - name: app-{{USER_NAME}}
+        image: {{USER_NAME}}/i-{{USER_NAME}}-{{BRANCH_NAME}}:latest
         env:
           - name: deployment.branch
             value: {{BRANCH_NAME}} 
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "30m"
         ports:
         - containerPort: 7100
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: kubernetes-cluster-{{USERNAME}}
-  name: app-{{USERNAME}}
+  namespace: kubernetes-cluster-{{USER_NAME}}
+  name: app-{{USER_NAME}}
 spec:
   type: LoadBalancer
   selector:
-    app: app-{{USERNAME}}
+    app: app-{{USER_NAME}}
   ports:
   - port: {{PORT}}
     targetPort: 7100
