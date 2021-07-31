@@ -130,12 +130,11 @@
             }
             stage('Kubernetes Deployment (GKE)') {
                 when {
-                    branch 'develop'
+                    branch 'main'
                 }
                 steps {
-                    powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USER_NAME}}', '${USER_NAME}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.gke.yml"
                     bat "kubectl config use-context gke_${PROJECT_ID}_${LOCATION}_${CLUSTER_NAME}"
-                    bat "kubectl apply -f ${WORKSPACE}\\deployment.gke.yml"
+                    bat "kubectl apply -f ${WORKSPACE}\\deployment.main.yml"
                 }    
             }
         }
