@@ -2,7 +2,7 @@
         agent any
         
         environment {
-            SONAR_QUBE = tool name: 'sonar_scanner_dotnet'
+            SONARQUBE = tool name: 'sonar_scanner_dotnet'
             USER_NAME = 'shubhamgoel02'
             PROJECT_ID = 'melodic-grail-321310'
             CLUSTER_NAME = 'kubernetes-cluster-shubhamgoel02'
@@ -26,7 +26,7 @@
                 }
                 steps {
                     withSonarQubeEnv('Test_Sonar') {
-                        bat "${SonarQubeTool}\\SonarScanner.MSBuild.exe begin /k:sonar-${USER_NAME} /n:sonar-${USER_NAME} /v:1.0 /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.vscoveragexml.reportsPaths=**/*.coverage"
+                        bat "${SONARQUBE}\\SonarScanner.MSBuild.exe begin /k:sonar-${USER_NAME} /n:sonar-${USER_NAME} /v:1.0 /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.vscoveragexml.reportsPaths=**/*.coverage"
                     }
                 }
             }
@@ -48,7 +48,7 @@
                 }
                 steps {
                     withSonarQubeEnv('Test_Sonar') {
-                        bat "${SonarQubeTool}\\SonarScanner.MSBuild.exe end"
+                        bat "${SONARQUBE}\\SonarScanner.MSBuild.exe end"
                     }
                 }
             }
