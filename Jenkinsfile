@@ -4,11 +4,10 @@
         environment {
             SonarQubeTool = tool name: 'sonar_scanner_dotnet'
             UserName = 'shubhamgoel02'
-            GKEProjectId = 'melodic-grail-321310'
-            GKEClusterName = 'kubernetes-cluster-shubhamgoel02'
-            GKELocation = 'us-central1'
-            GKEDeploymentFile = 'deployment.yml'
-            GKECredentials = 'GKEK8sKey'
+            PROJECT_ID = 'melodic-grail-321310'
+            CLUSTER_NAME = 'kubernetes-cluster-shubhamgoel02'
+            LOCATION = 'us-central1'
+            CREDENTIALS_ID = 'GKEK8sKey'
         }
         
         stages {
@@ -133,13 +132,14 @@
                     branch 'develop'
                 }
                 steps {
-                    step([$class: 'KubernetesEngineBuilder', 
-                        projectId: env.GKEProjectId,
-                        clusterName: env.GKEClusterName,
-                        zone: env.GKELocation,
-                        manifestPattern: 'deployment.yml',
-                        credentialsId: env.GKECredentials,
-                        verifyDeployments: true])
+                    step([
+                    $class: 'KubernetesEngineBuilder',
+                    projectId: env.PROJECT_ID,
+                    clusterName: env.CLUSTER_NAME,
+                    location: env.LOCATION,
+                    manifestPattern: 'deployment.yml',
+                    credentialsId: env.CREDENTIALS_ID,
+                    verifyDeployments: true])
                 }
             }
         }
