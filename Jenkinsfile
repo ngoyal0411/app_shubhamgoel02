@@ -137,7 +137,7 @@
                         projectId: env.GKEProjectId,
                         clusterName: env.GKEClusterName,
                         zone: env.GKELocation,
-                        manifestPattern: env.GKEDeploymentFile,
+                        manifestPattern: 'deployment.yml',
                         credentialsId: env.GKECredentials,
                         verifyDeployments: true])
                 }
