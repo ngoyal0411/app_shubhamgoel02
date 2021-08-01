@@ -20,6 +20,11 @@
                     git branch: "${BRANCH_NAME}", url: 'https://github.com/shubhamgoel4aug/app_shubhamgoel02.git'
                 }
             }
+            stage('dotnet restore') {
+                steps {
+                    bat "dotnet restore DevOpsnMicroServices/DevOpsnMicroServices.csproj"
+                }
+            }
             stage('Start sonarqube analysis') {
                 when {
                     branch 'master'
@@ -30,9 +35,8 @@
                     }
                 }
             }
-            stage('Build') {
-                steps {
-                    bat "dotnet restore DevOpsnMicroServices/DevOpsnMicroServices.csproj"
+            stage('Code Build') {
+                steps {                    
                     bat "dotnet build"
                 }
             }
