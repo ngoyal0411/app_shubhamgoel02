@@ -26,7 +26,7 @@
                 }
                 steps {
                     withSonarQubeEnv('Test_Sonar') {
-                        bat "${SONARQUBE}\\SonarScanner.MSBuild.exe begin /k:sonar-${USER_NAME} /n:sonar-${USER_NAME} /v:1.0 /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.vscoveragexml.reportsPaths=**/*.coverage"
+                        bat "${SONARQUBE}\\SonarScanner.MSBuild.exe begin /k:sonar-${USER_NAME} /n:sonar-${USER_NAME} /v:1.0 /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.vscoveragexml.reportsPaths=**/*.coveragexml"
                     }
                 }
             }
@@ -40,6 +40,7 @@
                 steps {
                     bat 'dotnet test --logger "trx;LogFileName=DevOpsnMicroServices.Tests.Results.trx" --no-build --collect "Code Coverage"'
                     mstest testResultsFile:"**/*.trx", keepLongStdio: true
+                    powershell "$CoverageFile = (Get-ChildItem ${WORKSPACE} -Recurse -Filter '*.coverage')[0].FullName; CodeCoverage.exe analyze /output:${WORKSPACE}\\DevOpsnMicroServices.Tests\\DevOpsnMicroServices.Coverage.coveragexml $CoverageFile"
                 }
             }
             stage('Stop sonarqube analysis') {
