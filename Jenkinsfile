@@ -22,7 +22,7 @@
             }
             stage('Start sonarqube analysis') {
                 when {
-                    branch 'main'
+                    branch 'master'
                 }
                 steps {
                     withSonarQubeEnv('Test_Sonar') {
@@ -44,7 +44,7 @@
             }
             stage('Stop sonarqube analysis') {
                 when {
-                        branch 'main'
+                        branch 'master'
                 }
                 steps {
                     withSonarQubeEnv('Test_Sonar') {
@@ -82,18 +82,18 @@
             }
             stage('Docker Deployment') {
                 parallel {
-                    stage('main') {
+                    stage('master') {
                         when {
-                            branch 'main'
+                            branch 'master'
                         }
                         steps {                            
-                            bat "docker run -p 7200:7100 -d -e deployment.branch=main --name c-${USER_NAME}_${BRANCH_NAME} ${USER_NAME}/i-${USER_NAME}-${BRANCH_NAME}:latest"
+                            bat "docker run -p 7200:7100 -d -e deployment.branch=master --name c-${USER_NAME}_${BRANCH_NAME} ${USER_NAME}/i-${USER_NAME}-${BRANCH_NAME}:latest"
                         }                    
                     }
                     stage('others') {
                         when {
                             not {
-                                branch 'main'
+                                branch 'master'
                             }
                         }
                         steps {                            
@@ -104,20 +104,20 @@
             }
             stage('Kubernetes Deployment (Local)') {
                 parallel {
-                    stage('main') {
+                    stage('master') {
                         when {
-                            branch 'main'
+                            branch 'master'
                         }
                         steps {
-                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USER_NAME}}', '${USER_NAME}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.main.yml"
+                            powershell "(Get-Content ${WORKSPACE}\\deployment.yml).Replace('{{USER_NAME}}', '${USER_NAME}').Replace('{{BRANCH_NAME}}', '${BRANCH_NAME}').Replace('{{PORT}}', '30157') | Out-File ${WORKSPACE}\\deployment.master.yml"
                             bat "kubectl config use-context docker-desktop"
-                            bat "kubectl apply -f ${WORKSPACE}\\deployment.main.yml"
+                            bat "kubectl apply -f ${WORKSPACE}\\deployment.master.yml"
                         }                    
                     }
                     stage('others') {
                         when {
                             not {
-                                branch 'main'
+                                branch 'master'
                             }
                         }
                         steps {
@@ -130,11 +130,11 @@
             }
             stage('Kubernetes Deployment (GKE)') {
                 when {
-                    branch 'main'
+                    branch 'master'
                 }
                 steps {
                     bat "kubectl config use-context gke_${PROJECT_ID}_${LOCATION}_${CLUSTER_NAME}"
-                    bat "kubectl apply -f ${WORKSPACE}\\deployment.main.yml"
+                    bat "kubectl apply -f ${WORKSPACE}\\deployment.master.yml"
                 }    
             }
         }
