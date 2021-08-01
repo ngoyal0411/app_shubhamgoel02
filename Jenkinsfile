@@ -39,8 +39,8 @@
             stage('Unit Testing') {
                 steps {
                     bat 'dotnet test --logger "trx;LogFileName=DevOpsnMicroServices.Tests.Results.trx" --no-build --collect "Code Coverage"'
-                    mstest testResultsFile:"**/*.trx", keepLongStdio: true
                     powershell "$CoverageFile = (Get-ChildItem ${WORKSPACE} -Recurse -Filter '*.coverage')[0].FullName; CodeCoverage.exe analyze /output:${WORKSPACE}\\DevOpsnMicroServices.Tests\\DevOpsnMicroServices.Coverage.coveragexml $CoverageFile"
+                    mstest testResultsFile:"**/*.trx", keepLongStdio: true
                 }
             }
             stage('Stop sonarqube analysis') {
