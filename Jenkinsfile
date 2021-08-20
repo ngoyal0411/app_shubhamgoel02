@@ -40,13 +40,6 @@
                     bat "dotnet build"
                 }
             }
-            stage('Unit Testing') {
-                steps {
-                    bat 'dotnet test --logger "trx;LogFileName=DevOpsnMicroServices.Tests.Results.trx" --no-build --collect "Code Coverage"'
-                    powershell "CodeCoverage.exe analyze /output:${WORKSPACE}\\DevOpsnMicroServices.Tests\\DevOpsnMicroServices.Coverage.coveragexml (Get-ChildItem ${WORKSPACE} -Recurse -Filter '*.coverage')[0].FullName"
-                    mstest testResultsFile:"**/*.trx", keepLongStdio: true
-                }
-            }
             stage('Stop sonarqube analysis') {
                 when {
                         branch 'master'
